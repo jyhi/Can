@@ -1,0 +1,15 @@
+stages:
+  - test
+
+image: openjdk:8
+
+before_script:
+  - wget https://github.com/sbt/sbt/releases/download/v1.5.2/sbt-1.5.2.tgz
+  - wget https://github.com/sbt/sbt/releases/download/v1.5.2/sbt-1.5.2.tgz.sha256
+  - sha256sum -c sbt-1.5.2.tgz.sha256 || exit 1
+  - tar xf sbt-1.5.2.tgz
+
+sbt-test:
+  stage: test
+  script:
+    - ./sbt/bin/sbt test
