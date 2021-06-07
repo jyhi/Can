@@ -5,8 +5,8 @@ ThisBuild / scalaVersion := "2.12.13"
 
 lazy val root = (project in file("."))
   .settings(
-    organization := "uk.ac.soton.ecs.ml10g20",
-    name := "nisc",
+    organization := "uk.ac.soton.ecs",
+    name := "can",
     version := "0.1.0",
     libraryDependencies ++= Seq(
       "edu.berkeley.cs" %% "chisel3" % "3.4.3",
