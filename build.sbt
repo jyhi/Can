@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2021 Minyong Li <ml10g20@soton.ac.uk>
+// SPDX-License-Identifier: CC0-1.0
+
 ThisBuild / scalaVersion := "2.12.13"
 
 lazy val root = (project in file("."))
