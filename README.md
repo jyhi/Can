@@ -7,7 +7,7 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 
 Can is a ChaCha20 cryptographic processor / accelerator based on a No-Instruction-Set Computer (NISC) architecture.
 
-This is an (ELEC6200) MSc Project.
+This is a COMP6200 MSc Project.
 
 ## Building
 
