@@ -45,7 +45,7 @@ This project is [REUSE 3.0][reuse] compliant. Every file in this repository eith
 - Configuration files are (un)licensed under the [CC0 1.0][CC0-1.0].
 - General documentation files are licensed under the [CC-BY-SA 4.0][CC-BY-SA-4.0].
 
-The corresponding full license texts are available under the `LICENSES` folder.
+The corresponding full license texts are available under the `LICENSES` folder. In addition, the `LICENSE` file is available for non-REUSE practices.
 
 [reuse]: https://reuse.software/
 [CERN-OHL-W-2.0]: https://ohwr.org/project/cernohl/wikis/Documents/CERN-OHL-version-2
