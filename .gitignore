@@ -3,5 +3,11 @@
 
 .bsp/
 .idea/
+db/
+incremental_db/
+output_files/
 project/
 target/
+*.v
+*.fir
+*.anno.json
