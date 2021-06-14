@@ -5,18 +5,28 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 
 # Can
 
-Can is a ChaCha20 cryptographic processor / accelerator based on a No-Instruction-Set Computer (NISC) architecture.
+Can is a ChaCha20 cryptographic accelerator based on a No-Instruction-Set Computer (NISC) architecture.
 
 This is a COMP6200 MSc Project.
 
-## Building
+## Building and Running
 
 ```shell
-# Run the Scala code to run the Chisel/FIRRTL compiler to generate Verilog
+# Run the Scala code to run the Chisel/FIRRTL compiler to generate HDL
 sbt run
 ```
 
-## Testing
+A few files will be generated under the current working directory:
+
+- `Can.anno.json`: A serialization of FIRRTL annotations. [\*][WriteOutputAnnotations]
+- `Can.fir`: A FIRRTL file compiled from Chisel sources.
+- `Can.v`: A synthesizable Verilog file compiled from FIRRTL.
+
+Use `Can.v` to further synthesize / fit / map it in other tools.
+
+[WriteOutputAnnotations]: https://github.com/chipsalliance/firrtl/blob/master/src/main/scala/firrtl/options/phases/WriteOutputAnnotations.scala
+
+## Testing and Simulating
 
 ```shell
 # Run all test benches
@@ -26,15 +36,13 @@ sbt test
 sbt coverage test coverageReport
 ```
 
-### Simulation
+[ChiselTest] is used to perform unit testing. Test cases are written with [ScalaTest] and simulation is performed on [Treadle]. Alternatively, the compiled HDL file can be used in other simulators, but this is not tested yet.
 
-To do...
+The coverage report will be generated under path `target/scala-2.12/scoverage-report/`.
 
-### Synthesis
-
-Chisel compiles to synthesizable Verilog HDL, so any synthesizer supporting Verilog as input can synthesize this project.
-
-To do...
+[ChiselTest]: https://www.chisel-lang.org/chiseltest/
+[ScalaTest]: https://www.scalatest.org/
+[Treadle]: https://www.chisel-lang.org/treadle/
 
 ## License
 
