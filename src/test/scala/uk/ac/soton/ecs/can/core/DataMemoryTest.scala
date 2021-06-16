@@ -12,6 +12,8 @@ class DataMemoryTest extends FlatSpec with ChiselScalatestTester {
   private val dataWidth = 16
   private val size = 32
 
+  behavior of "The Data Memory"
+
   it should "store some values" in {
     test(new DataMemory(addrWidth, dataWidth, size)) { c =>
       c.io.write.addr.poke("h01".U(addrWidth.W))

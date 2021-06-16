@@ -90,6 +90,8 @@ class ChaChaBlockTest extends FlatSpec with ChiselScalatestTester {
     }
   }
 
+  behavior of "The ChaCha Block Function"
+
   it should "compute RFC8439 2.3.2 test vector correctly" in
     test(new ChaChaBlock)(doTest(_, rfc8439232TestVector))
 

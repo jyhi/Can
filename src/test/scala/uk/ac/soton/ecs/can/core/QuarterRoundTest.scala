@@ -8,6 +8,8 @@ import chiseltest._
 import chisel3._
 
 class QuarterRoundTest extends FlatSpec with ChiselScalatestTester {
+  behavior of "The ChaCha Quarter Round Function"
+
   it should "compute RFC8439 2.1.1 test vector correctly" in {
     test(new QuarterRound) { c =>
       c.io.in(0).poke("h11111111".U(32.W))

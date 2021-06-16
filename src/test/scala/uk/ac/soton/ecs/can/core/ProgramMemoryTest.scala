@@ -36,6 +36,8 @@ class ProgramMemoryTest extends FlatSpec with ChiselScalatestTester {
     pm.reset.poke(false.B)
   }
 
+  behavior of "The Program Memory"
+
   it should "be writable and readable as PC increments" in {
     test(new ProgramMemory(addrWidth, cwWidth, size)) { c =>
       c.io.br.abs.poke(false.B)
