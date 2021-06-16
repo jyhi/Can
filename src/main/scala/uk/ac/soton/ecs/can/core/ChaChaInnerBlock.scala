@@ -2,7 +2,7 @@ package uk.ac.soton.ecs.can.core
 
 import chisel3._
 
-class DoubleRound(regBetweenRounds: Boolean) extends Module {
+class ChaChaInnerBlock(regBetweenRounds: Boolean) extends Module {
   val io = IO(new Bundle {
     val in = Input(Vec(16, UInt(32.W)))
     val out = Output(Vec(16, UInt(32.W)))

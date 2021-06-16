@@ -2,7 +2,7 @@ package uk.ac.soton.ecs.can.core
 
 import chisel3._
 
-class ChaChaBlockFunction extends Module {
+class ChaChaBlock extends Module {
   val io = IO(new Bundle {
     val muxIn = Input(Bool())
     val in = Input(Vec(16, UInt(32.W)))
@@ -10,7 +10,7 @@ class ChaChaBlockFunction extends Module {
   })
 
   val initialState = Reg(Vec(16, UInt(32.W)))
-  val doubleRound = Module(new DoubleRound(regBetweenRounds = true))
+  val doubleRound = Module(new ChaChaInnerBlock(regBetweenRounds = true))
   val doubleRoundState = Reg(Vec(16, UInt(32.W)))
 
   initialState := io.in

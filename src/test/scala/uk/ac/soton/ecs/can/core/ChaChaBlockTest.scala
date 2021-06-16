@@ -4,7 +4,7 @@ import org.scalatest._
 import chiseltest._
 import chisel3._
 
-class ChaChaBlockFunctionTest extends FlatSpec with ChiselScalatestTester {
+class ChaChaBlockTest extends FlatSpec with ChiselScalatestTester {
 
   private val rfc8439232TestVector = Seq(
     "h61707865".U(32.W) -> "he4e7f110".U(32.W),
@@ -63,7 +63,7 @@ class ChaChaBlockFunctionTest extends FlatSpec with ChiselScalatestTester {
     "h00000000".U(32.W) -> "hedc49139".U(32.W)
   )
 
-  private def doTest(c: ChaChaBlockFunction, testVector: Seq[(UInt, UInt)]) {
+  private def doTest(c: ChaChaBlock, testVector: Seq[(UInt, UInt)]) {
     c.io.in.zip(testVector).foreach { t =>
       t._1.poke(t._2._1)
     }
@@ -91,11 +91,11 @@ class ChaChaBlockFunctionTest extends FlatSpec with ChiselScalatestTester {
   }
 
   it should "compute RFC8439 2.3.2 test vector correctly" in
-    test(new ChaChaBlockFunction)(doTest(_, rfc8439232TestVector))
+    test(new ChaChaBlock)(doTest(_, rfc8439232TestVector))
 
   it should "compute RFC8439 2.4.2 test vector (first block) correctly" in
-    test(new ChaChaBlockFunction)(doTest(_, rfc8439242B1TestVector))
+    test(new ChaChaBlock)(doTest(_, rfc8439242B1TestVector))
 
   it should "compute RFC8439 2.4.2 test vector (second block) correctly" in
-    test(new ChaChaBlockFunction)(doTest(_, rfc8439242B2TestVector))
+    test(new ChaChaBlock)(doTest(_, rfc8439242B2TestVector))
 }
