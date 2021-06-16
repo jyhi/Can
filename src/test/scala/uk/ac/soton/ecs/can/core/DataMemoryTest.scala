@@ -50,5 +50,4 @@ class DataMemoryTest extends FlatSpec with ChiselScalatestTester {
       c.io.read.data.expect("hcafe".U(dataWidth.W))
     }
   }
-
 }

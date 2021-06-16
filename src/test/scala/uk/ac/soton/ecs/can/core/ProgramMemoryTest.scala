@@ -60,7 +60,7 @@ class ProgramMemoryTest extends FlatSpec with ChiselScalatestTester {
     }
   }
 
-  it should "correctly do relative branch" in {
+  it should "do relative branching correctly" in {
     test(new ProgramMemory(addrWidth, cwWidth, size)) { c =>
       c.io.br.abs.poke(false.B)
       c.io.br.rel.poke(false.B)
@@ -100,7 +100,7 @@ class ProgramMemoryTest extends FlatSpec with ChiselScalatestTester {
     }
   }
 
-  it should "do absolute branch correctly" in {
+  it should "do absolute branching correctly" in {
     test(new ProgramMemory(addrWidth, cwWidth, size)) { c =>
       c.io.br.abs.poke(false.B)
       c.io.br.rel.poke(false.B)
@@ -136,5 +136,4 @@ class ProgramMemoryTest extends FlatSpec with ChiselScalatestTester {
       }
     }
   }
-
 }

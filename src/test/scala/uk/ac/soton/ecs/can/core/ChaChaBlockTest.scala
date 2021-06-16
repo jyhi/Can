@@ -5,7 +5,6 @@ import chiseltest._
 import chisel3._
 
 class ChaChaBlockTest extends FlatSpec with ChiselScalatestTester {
-
   private val rfc8439232TestVector = Seq(
     "h61707865".U(32.W) -> "he4e7f110".U(32.W),
     "h3320646e".U(32.W) -> "h15593bd1".U(32.W),
@@ -24,7 +23,6 @@ class ChaChaBlockTest extends FlatSpec with ChiselScalatestTester {
     "h4a000000".U(32.W) -> "he883d0cb".U(32.W),
     "h00000000".U(32.W) -> "h4e3c50a2".U(32.W)
   )
-
   private val rfc8439242B1TestVector = Seq(
     "h61707865".U(32.W) -> "hf3514f22".U(32.W),
     "h3320646e".U(32.W) -> "he1d91b40".U(32.W),
@@ -43,7 +41,6 @@ class ChaChaBlockTest extends FlatSpec with ChiselScalatestTester {
     "h4a000000".U(32.W) -> "h4c2c21ea".U(32.W),
     "h00000000".U(32.W) -> "hb7417df0".U(32.W)
   )
-
   private val rfc8439242B2TestVector = Seq(
     "h61707865".U(32.W) -> "h9f74a669".U(32.W),
     "h3320646e".U(32.W) -> "h410f633f".U(32.W),
