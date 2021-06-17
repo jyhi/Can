@@ -13,7 +13,6 @@ lazy val root = (project in file("."))
       "edu.berkeley.cs" %% "chiseltest" % "0.3.3" % "test"
     ),
     scalacOptions ++= Seq(
-      "-Xsource:2.11",
       "-language:reflectiveCalls",
       "-deprecation",
       "-feature",

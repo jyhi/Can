@@ -64,7 +64,7 @@ class ChaChaBlockTest extends FlatSpec with ChiselScalatestTester {
   )
 
   private def doTest(c: ChaChaBlock, testVector: Seq[(UInt, UInt)]) {
-    c.io.in.zip(testVector).foreach { t =>
+    c.in.zip(testVector).foreach { t =>
       t._1.poke(t._2._1)
     }
 
@@ -72,20 +72,20 @@ class ChaChaBlockTest extends FlatSpec with ChiselScalatestTester {
     c.clock.step()
 
     // Select the initial state register as the input to the 2-round circuit
-    c.io.muxIn.poke(true.B)
+    c.muxIn.poke(true.B)
 
     // Shift the 2-rounded state to the round register
     c.clock.step(2)
 
     // Select the round register as the input to the 2-round circuit
-    c.io.muxIn.poke(false.B)
+    c.muxIn.poke(false.B)
 
     // Depending on the ChaCha variant and the pipeline configuration, wait
     // for the correct time for the correct result. Note that one 2-round has
     // been processed in the above steps.
     c.clock.step(19)
 
-    c.io.out.zip(testVector).foreach { t =>
+    c.out.zip(testVector).foreach { t =>
       t._1.expect(t._2._2)
     }
   }

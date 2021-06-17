@@ -16,40 +16,40 @@ class DataMemoryTest extends FlatSpec with ChiselScalatestTester {
 
   it should "store some values" in {
     test(new DataMemory(addrWidth, dataWidth, size)) { c =>
-      c.io.write.addr.poke("h01".U(addrWidth.W))
-      c.io.write.data.poke("h1234".U(dataWidth.W))
-      c.io.write.en.poke(true.B)
+      c.write.addr.poke("h01".U(addrWidth.W))
+      c.write.data.poke("h1234".U(dataWidth.W))
+      c.write.en.poke(true.B)
       c.clock.step(2)
-      c.io.write.en.poke(false.B)
-      c.io.read.addr.poke("h01".U(addrWidth.W))
+      c.write.en.poke(false.B)
+      c.read.addr.poke("h01".U(addrWidth.W))
       c.clock.step(2)
-      c.io.read.data.expect("h1234".U(dataWidth.W))
+      c.read.data.expect("h1234".U(dataWidth.W))
 
-      c.io.write.addr.poke("h0a".U(addrWidth.W))
-      c.io.write.data.poke("hfefe".U(dataWidth.W))
-      c.io.write.en.poke(true.B)
+      c.write.addr.poke("h0a".U(addrWidth.W))
+      c.write.data.poke("hfefe".U(dataWidth.W))
+      c.write.en.poke(true.B)
       c.clock.step(2)
-      c.io.write.en.poke(false.B)
-      c.io.read.addr.poke("h0a".U(addrWidth.W))
+      c.write.en.poke(false.B)
+      c.read.addr.poke("h0a".U(addrWidth.W))
       c.clock.step(2)
-      c.io.read.data.expect("hfefe".U(dataWidth.W))
+      c.read.data.expect("hfefe".U(dataWidth.W))
     }
   }
 
   it should "not write without write enable" in {
     test(new DataMemory(addrWidth, dataWidth, size)) { c =>
-      c.io.write.addr.poke("h06".U(addrWidth.W))
-      c.io.write.data.poke("hcafe".U(dataWidth.W))
-      c.io.write.en.poke(true.B)
+      c.write.addr.poke("h06".U(addrWidth.W))
+      c.write.data.poke("hcafe".U(dataWidth.W))
+      c.write.en.poke(true.B)
       c.clock.step(2)
-      c.io.write.en.poke(false.B)
-      c.io.read.addr.poke("h06".U(addrWidth.W))
+      c.write.en.poke(false.B)
+      c.read.addr.poke("h06".U(addrWidth.W))
       c.clock.step(2)
-      c.io.read.data.expect("hcafe".U(dataWidth.W))
+      c.read.data.expect("hcafe".U(dataWidth.W))
 
-      c.io.write.data.poke("hefac".U(dataWidth.W))
+      c.write.data.poke("hefac".U(dataWidth.W))
       c.clock.step(8)
-      c.io.read.data.expect("hcafe".U(dataWidth.W))
+      c.read.data.expect("hcafe".U(dataWidth.W))
     }
   }
 }
