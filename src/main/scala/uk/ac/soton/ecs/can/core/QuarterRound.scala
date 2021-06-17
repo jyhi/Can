@@ -4,7 +4,6 @@
 package uk.ac.soton.ecs.can.core
 
 import chisel3._
-import chisel3.util._
 
 class QuarterRound extends Module {
   val io = IO(new Bundle {
@@ -13,7 +12,7 @@ class QuarterRound extends Module {
   })
 
   private def rotateLeft(v: UInt, b: Int): UInt =
-    Cat(v(31 - b, 0), v(31, 32 - b))
+    v(31 - b, 0) ## v(31, 32 - b)
 
   val a0 = io.in(0)
   val b0 = io.in(1)
