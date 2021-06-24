@@ -60,6 +60,19 @@ class ProgramMemoryTest extends FlatSpec with ChiselScalatestTester {
         c.clock.step()
       }
     }
+
+    test(new ProgramMemory(addrWidth, cwWidth, size, false)) { c =>
+      c.br.abs.poke(false.B)
+      c.br.rel.poke(false.B)
+      c.br.addr.poke(0.U(addrWidth.W))
+
+      initMemory(c)
+
+      memMap.foreach { m =>
+        c.cw.expect(m._2)
+        c.clock.step()
+      }
+    }
   }
 
   it should "do relative branching correctly" in {

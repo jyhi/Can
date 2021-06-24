@@ -5,8 +5,12 @@ package uk.ac.soton.ecs.can.core
 
 import chisel3._
 
-class ProgramMemory(addrWidth: Int, cwWidth: Int, size: Int)
-    extends MultiIOModule {
+class ProgramMemory(
+    addrWidth: Int,
+    cwWidth: Int,
+    size: Int,
+    syncMem: Boolean = true
+) extends MultiIOModule {
   val br = IO(new Bundle {
     val abs = Input(Bool())
     val rel = Input(Bool())
@@ -19,7 +23,9 @@ class ProgramMemory(addrWidth: Int, cwWidth: Int, size: Int)
     val data = Input(UInt(cwWidth.W))
   })
 
-  val mem = SyncReadMem(size, UInt(cwWidth.W))
+  val mem =
+    if (syncMem) SyncReadMem(size, UInt(cwWidth.W))
+    else Mem(size, UInt(cwWidth.W))
   val pc = RegInit(0.U(addrWidth.W))
 
   when(write.en) {

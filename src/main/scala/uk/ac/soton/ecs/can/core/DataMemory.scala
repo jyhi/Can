@@ -5,8 +5,12 @@ package uk.ac.soton.ecs.can.core
 
 import chisel3._
 
-class DataMemory(addrWidth: Int, dataWidth: Int, size: Int)
-    extends MultiIOModule {
+class DataMemory(
+    addrWidth: Int,
+    dataWidth: Int,
+    size: Int,
+    syncMem: Boolean = true
+) extends MultiIOModule {
   val read = IO(new Bundle {
     val addr = Input(UInt(addrWidth.W))
     val data = Output(UInt(dataWidth.W))
@@ -17,7 +21,9 @@ class DataMemory(addrWidth: Int, dataWidth: Int, size: Int)
     val data = Input(UInt(dataWidth.W))
   })
 
-  val mem = SyncReadMem(size, UInt(dataWidth.W))
+  val mem =
+    if (syncMem) SyncReadMem(size, UInt(dataWidth.W))
+    else Mem(size, UInt(dataWidth.W))
 
   read.data := mem(read.addr)
 
