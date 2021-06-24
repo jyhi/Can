@@ -64,40 +64,43 @@ class ChaChaBlockTest extends FlatSpec with ChiselScalatestTester {
   )
 
   private def doTest(c: ChaChaBlock, testVector: Seq[(UInt, UInt)]) {
-    c.in.zip(testVector).foreach { t =>
-      t._1.poke(t._2._1)
+    c.in.zip(testVector).foreach { case (blockIn, (vectorIn, _)) =>
+      blockIn.poke(vectorIn)
     }
 
-    // Shift inputs into the initial state register
-    c.clock.step()
+    // Select the input port as the input to the rounds
+    c.roundLoop.poke(false.B)
 
-    // Select the initial state register as the input to the 2-round circuit
-    c.muxIn.poke(true.B)
+    // Shift the state through the rounds
+    c.clock.step(if (c.regBetweenRounds) 2 else 1)
 
-    // Shift the 2-rounded state to the round register
-    c.clock.step(2)
-
-    // Select the round register as the input to the 2-round circuit
-    c.muxIn.poke(false.B)
+    // Select the round register as the input to the rounds
+    c.roundLoop.poke(true.B)
 
     // Depending on the ChaCha variant and the pipeline configuration, wait
     // for the correct time for the correct result. Note that one 2-round has
     // been processed in the above steps.
-    c.clock.step(19)
+    c.clock.step(if (c.regBetweenRounds) 19 else 9)
 
-    c.out.zip(testVector).foreach { t =>
-      t._1.expect(t._2._2)
+    c.out.zip(testVector).foreach { case (blockOut, (_, vectorOut)) =>
+      blockOut.expect(vectorOut)
     }
   }
 
   behavior of "The ChaCha Block Function"
 
-  it should "compute RFC8439 2.3.2 test vector correctly" in
-    test(new ChaChaBlock)(doTest(_, rfc8439232TestVector))
+  it should "compute RFC8439 2.3.2 test vector correctly" in {
+    test(new ChaChaBlock(true))(doTest(_, rfc8439232TestVector))
+    test(new ChaChaBlock(false))(doTest(_, rfc8439232TestVector))
+  }
 
-  it should "compute RFC8439 2.4.2 test vector (first block) correctly" in
-    test(new ChaChaBlock)(doTest(_, rfc8439242B1TestVector))
+  it should "compute RFC8439 2.4.2 test vector (first block) correctly" in {
+    test(new ChaChaBlock(true))(doTest(_, rfc8439242B1TestVector))
+    test(new ChaChaBlock(false))(doTest(_, rfc8439242B1TestVector))
+  }
 
-  it should "compute RFC8439 2.4.2 test vector (second block) correctly" in
-    test(new ChaChaBlock)(doTest(_, rfc8439242B2TestVector))
+  it should "compute RFC8439 2.4.2 test vector (second block) correctly" in {
+    test(new ChaChaBlock(true))(doTest(_, rfc8439242B2TestVector))
+    test(new ChaChaBlock(false))(doTest(_, rfc8439242B2TestVector))
+  }
 }

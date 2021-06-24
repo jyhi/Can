@@ -5,20 +5,25 @@ package uk.ac.soton.ecs.can.core
 
 import chisel3._
 
-class ChaChaBlock extends MultiIOModule {
-  val muxIn = IO(Input(Bool()))
+class ChaChaBlock(val regBetweenRounds: Boolean = true) extends MultiIOModule {
+  val roundLoop = IO(Input(Bool()))
+  val initialState = IO(Input(Vec(16, UInt(32.W))))
   val in = IO(Input(Vec(16, UInt(32.W))))
   val out = IO(Output(Vec(16, UInt(32.W))))
 
-  val initialState = Reg(Vec(16, UInt(32.W)))
-  val doubleRound = Module(new ChaChaInnerBlock(regBetweenRounds = true))
-  val doubleRoundState = Reg(Vec(16, UInt(32.W)))
+  private val columnRound = Module(new ColumnRound)
+  private val diagonalRound = Module(new DiagonalRound)
+  private val betweenRounds =
+    if (regBetweenRounds) Reg(Vec(16, UInt(32.W)))
+    else Wire(Vec(16, UInt(32.W)))
+  private val afterRounds = Reg(Vec(16, UInt(32.W)))
 
-  initialState := in
-  doubleRound.in := Mux(muxIn, initialState, doubleRoundState)
-  doubleRoundState := doubleRound.out
+  private val muxRoundLoop = Mux(roundLoop, afterRounds, in)
+  private val sumInRound = in.zip(afterRounds).map { case (i, r) => i + r }
 
-  val addedState = doubleRoundState.zip(initialState).map(t => t._1 + t._2)
-
-  out := addedState
+  columnRound.in := muxRoundLoop
+  betweenRounds := columnRound.out
+  diagonalRound.in := betweenRounds
+  afterRounds := diagonalRound.out
+  out := sumInRound
 }
