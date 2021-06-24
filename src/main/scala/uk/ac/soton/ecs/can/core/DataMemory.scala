@@ -11,10 +11,15 @@ class DataMemory(
     size: Int,
     syncMem: Boolean = true
 ) extends MultiIOModule {
-  val read = IO(new Bundle {
-    val addr = Input(UInt(addrWidth.W))
-    val data = Output(UInt(dataWidth.W))
-  })
+  val read = IO(
+    Vec(
+      2,
+      new Bundle {
+        val addr = Input(UInt(addrWidth.W))
+        val data = Output(UInt(dataWidth.W))
+      }
+    )
+  )
   val write = IO(new Bundle {
     val en = Input(Bool())
     val addr = Input(UInt(addrWidth.W))
@@ -25,7 +30,7 @@ class DataMemory(
     if (syncMem) SyncReadMem(size, UInt(dataWidth.W))
     else Mem(size, UInt(dataWidth.W))
 
-  read.data := mem(read.addr)
+  read.foreach(p => p.data := mem(p.addr))
 
   when(write.en) {
     mem(write.addr) := write.data
