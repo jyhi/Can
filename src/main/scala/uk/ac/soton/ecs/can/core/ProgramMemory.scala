@@ -8,7 +8,7 @@ import chisel3._
 class ProgramMemory(
     addrWidth: Int,
     cwWidth: Int,
-    size: Int,
+    nWords: Int,
     syncMem: Boolean = true
 ) extends MultiIOModule {
   val br = IO(new Bundle {
@@ -17,20 +17,21 @@ class ProgramMemory(
     val addr = Input(UInt(addrWidth.W))
   })
   val cw = IO(Output(UInt(cwWidth.W)))
+
+  val read = IO(new Bundle {
+    val addr = Input(UInt(addrWidth.W))
+    val data = Output(UInt(cwWidth.W))
+  })
   val write = IO(new Bundle {
     val en = Input(Bool())
     val addr = Input(UInt(addrWidth.W))
     val data = Input(UInt(cwWidth.W))
   })
 
-  val mem =
-    if (syncMem) SyncReadMem(size, UInt(cwWidth.W))
-    else Mem(size, UInt(cwWidth.W))
-  val pc = RegInit(0.U(addrWidth.W))
-
-  when(write.en) {
-    mem(write.addr) := write.data
-  }
+  private val mem =
+    if (syncMem) SyncReadMem(nWords, UInt(cwWidth.W))
+    else Mem(nWords, UInt(cwWidth.W))
+  private val pc = RegInit(0.U(addrWidth.W))
 
   when(br.abs) {
     pc := br.addr.asUInt()
@@ -41,4 +42,10 @@ class ProgramMemory(
   }
 
   cw := mem(pc)
+
+  read.data := mem(read.addr)
+
+  when(write.en) {
+    mem(write.addr) := write.data
+  }
 }
