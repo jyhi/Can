@@ -11,8 +11,8 @@ class ChaChaBlock(val regBetweenRounds: Boolean = true) extends MultiIOModule {
   val in = IO(Input(Vec(16, UInt(32.W))))
   val out = IO(Output(Vec(16, UInt(32.W))))
 
-  private val columnRound = Module(new ColumnRound)
-  private val diagonalRound = Module(new DiagonalRound)
+  private val columnRound = Module(ChaChaRound.columnar)
+  private val diagonalRound = Module(ChaChaRound.diagonal)
   private val betweenRounds =
     if (regBetweenRounds) Reg(Vec(16, UInt(32.W)))
     else Wire(Vec(16, UInt(32.W)))
