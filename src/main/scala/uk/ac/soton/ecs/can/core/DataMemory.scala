@@ -26,7 +26,7 @@ class DataMemory(
     val data = Input(UInt(dataWidth.W))
   })
 
-  val mem =
+  private val mem =
     if (syncMem) SyncReadMem(size, UInt(dataWidth.W))
     else Mem(size, UInt(dataWidth.W))
 
