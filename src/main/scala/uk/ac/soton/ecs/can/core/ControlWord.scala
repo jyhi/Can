@@ -10,6 +10,7 @@ class ControlWord(addrWidth: Int, immWidth: Int = 8) extends Bundle {
   val absoluteBranch = Bool()
   val relativeBranch = Bool()
   val ramReadAddress = Vec(2, UInt(addrWidth.W))
+  val ramWriteEnable = Bool()
   val ramWriteAddress = UInt(addrWidth.W)
   val fillConstants = Bool()
   val incrementBlockCount = Bool()
