@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2021 Minyong Li <ml10g20@soton.ac.uk>
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 package uk.ac.soton.ecs.can.core
 
 import org.scalatest._
