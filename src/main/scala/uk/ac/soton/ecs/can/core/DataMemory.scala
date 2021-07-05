@@ -9,7 +9,7 @@ class DataMemory(
     addrWidth: Int,
     dataWidth: Int,
     size: Int,
-    syncMem: Boolean = true
+    syncMem: Boolean
 ) extends MultiIOModule {
   val read = IO(
     Vec(

@@ -9,7 +9,7 @@ class ProgramMemory(
     addrWidth: Int,
     cwWidth: Int,
     nWords: Int,
-    syncMem: Boolean = true
+    syncMem: Boolean
 ) extends MultiIOModule {
   val br = IO(new Bundle {
     val abs = Input(Bool())
