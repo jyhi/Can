@@ -6,23 +6,16 @@ package uk.ac.soton.ecs.can.core
 import chisel3._
 import scala.math.{ceil, log}
 
-class CanCore(
-    programMemoryWords: Int,
-    dataMemoryWords: Int,
-    syncReadMemory: Boolean = true,
-    regAfterBlockInitializer: Boolean = true,
-    regBetweenRounds: Boolean = true,
-    regAfterAdder: Boolean = true
-) extends MultiIOModule {
+class CanCore(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
 
   // ========== Calculated Parameters ========== //
 
   private val programMemoryAddressWidth = ceil(
-    log(programMemoryWords) / log(2)
+    log(cfg.programMemoryWords) / log(2)
   ).toInt
   private val controlWordWidth = ControlWord(programMemoryAddressWidth).getWidth
   private val dataMemoryAddressWidth = ceil(
-    log(dataMemoryWords) / log(2)
+    log(cfg.dataMemoryWords) / log(2)
   ).toInt
   private val blockWidth = 512
 
@@ -60,16 +53,16 @@ class CanCore(
     new ProgramMemory(
       programMemoryAddressWidth,
       controlWordWidth,
-      programMemoryWords,
-      syncReadMemory
+      cfg.programMemoryWords,
+      cfg.syncReadMemory
     )
   )
   private val dataMemory = Module(
     new DataMemory(
       dataMemoryAddressWidth,
       blockWidth,
-      dataMemoryWords,
-      syncReadMemory
+      cfg.dataMemoryWords,
+      cfg.syncReadMemory
     )
   )
   private val blockInitializer = Module(new BlockInitializer)
@@ -81,18 +74,18 @@ class CanCore(
   // ========== Non-Module Components ========== //
 
   private val afterBlockInitializer =
-    if (regAfterBlockInitializer)
+    if (cfg.regAfterBlockInitializer)
       Reg(Vec(16, UInt(32.W)))
     else
       Wire(Vec(16, UInt(32.W)))
   private val betweenRounds =
-    if (regBetweenRounds)
+    if (cfg.regBetweenRounds)
       Reg(Vec(16, UInt(32.W)))
     else
       Wire(Vec(16, UInt(32.W)))
   private val afterRounds = Reg(Vec(16, UInt(32.W)))
   private val afterAdder =
-    if (regAfterAdder)
+    if (cfg.regAfterAdder)
       Reg(Vec(16, UInt(32.W)))
     else
       Wire(Vec(16, UInt(32.W)))
