@@ -4,19 +4,15 @@
 package uk.ac.soton.ecs.can.core
 
 import chisel3._
-import scala.math.{ceil, log}
+import chisel3.util.log2Ceil
 
 class CanCore(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
 
   // ========== Calculated Parameters ========== //
 
-  private val programMemoryAddressWidth = ceil(
-    log(cfg.programMemoryWords) / log(2)
-  ).toInt
+  private val programMemoryAddressWidth = log2Ceil(cfg.programMemoryWords)
   private val controlWordWidth = ControlWord(programMemoryAddressWidth).getWidth
-  private val dataMemoryAddressWidth = ceil(
-    log(cfg.dataMemoryWords) / log(2)
-  ).toInt
+  private val dataMemoryAddressWidth = log2Ceil(cfg.dataMemoryWords)
   private val blockWidth = 512
 
   // ========== External I/O Ports ========== //
