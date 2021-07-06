@@ -3,15 +3,7 @@
 
 package uk.ac.soton.ecs.can.core
 
-import chisel3._
-
-class QuarterRound extends MultiIOModule {
-  val in = IO(Input(Vec(4, UInt(32.W))))
-  val out = IO(Output(Vec(4, UInt(32.W))))
-
-  private def rotateLeft(v: UInt, b: Int): UInt =
-    v(31 - b, 0) ## v(31, 32 - b)
-
+class CombinationalQuarterRound extends BaseQuarterRound {
   private val a0 = in(0)
   private val b0 = in(1)
   private val c0 = in(2)

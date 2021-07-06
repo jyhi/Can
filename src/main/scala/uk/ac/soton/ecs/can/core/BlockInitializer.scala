@@ -4,32 +4,26 @@
 package uk.ac.soton.ecs.can.core
 
 import chisel3._
+import uk.ac.soton.ecs.can.types.ChaCha20IETFBlock
 
 class BlockInitializer extends MultiIOModule {
   val fillConstants = IO(Input(Bool()))
   val incrementBlockCount = IO(Input(Bool()))
-  val in = IO(Input(Vec(16, UInt(32.W))))
-  val out = IO(Output(Vec(16, UInt(32.W))))
+  val in = IO(Input(UInt(512.W)))
+  val out = IO(Output(UInt(512.W)))
 
-  private val constants = VecInit(
-    "h61707865".U(32.W),
-    "h3320646e".U(32.W),
-    "h79622d32".U(32.W),
-    "h6b206574".U(32.W)
+  private val _in = in.asTypeOf(new ChaCha20IETFBlock)
+  private val _out = Wire(new ChaCha20IETFBlock)
+  out := _out.asUInt()
+
+  private val constant = "h617078653320646e79622d326b206574".U(128.W)
+
+  _out.constant := Mux(fillConstants, constant, _in.constant)
+  _out.key := _in.key
+  _out.blockCount := Mux(
+    incrementBlockCount,
+    _in.blockCount + 1.U,
+    _in.blockCount
   )
-  private val incrementedBlockCount = in(12) + 1.U(32.W)
-
-  private val io = in.zip(out)
-
-  io.take(4).zip(constants).foreach { case ((i, o), c) =>
-    o := Mux(fillConstants, c, i)
-  }
-
-  io.slice(4, 12).foreach { case (i, o) => o := i }
-
-  io(12) match {
-    case (i, o) => o := Mux(incrementBlockCount, incrementedBlockCount, i)
-  }
-
-  io.takeRight(3).foreach { case (i, o) => o := i }
+  _out.nonce := _in.nonce
 }

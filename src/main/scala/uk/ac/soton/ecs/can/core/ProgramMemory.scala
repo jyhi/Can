@@ -4,13 +4,14 @@
 package uk.ac.soton.ecs.can.core
 
 import chisel3._
+import chisel3.util.log2Ceil
+import uk.ac.soton.ecs.can.types.CanCoreControlWord
+import uk.ac.soton.ecs.can.config.CanCoreConfiguration
 
-class ProgramMemory(
-    addrWidth: Int,
-    cwWidth: Int,
-    nWords: Int,
-    syncMem: Boolean
-) extends MultiIOModule {
+class ProgramMemory(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
+  private val addrWidth = log2Ceil(cfg.programMemoryWords)
+  private val cwWidth = (new CanCoreControlWord).getWidth
+
   val br = IO(new Bundle {
     val abs = Input(Bool())
     val rel = Input(Bool())
@@ -29,8 +30,11 @@ class ProgramMemory(
   })
 
   private val mem =
-    if (syncMem) SyncReadMem(nWords, UInt(cwWidth.W))
-    else Mem(nWords, UInt(cwWidth.W))
+    if (cfg.syncReadMemory)
+      SyncReadMem(cfg.programMemoryWords, UInt(cwWidth.W))
+    else
+      Mem(cfg.programMemoryWords, UInt(cwWidth.W))
+
   private val pc = RegInit(0.U(addrWidth.W))
 
   when(br.abs) {

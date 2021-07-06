@@ -5,13 +5,15 @@ package uk.ac.soton.ecs.can.core
 
 import chisel3._
 import chisel3.util.log2Ceil
+import uk.ac.soton.ecs.can.config.CanCoreConfiguration
+import uk.ac.soton.ecs.can.types.CanCoreControlWord
 
 class CanCore(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
 
   // ========== Calculated Parameters ========== //
 
   private val programMemoryAddressWidth = log2Ceil(cfg.programMemoryWords)
-  private val controlWordWidth = ControlWord(programMemoryAddressWidth).getWidth
+  private val controlWordWidth = (new CanCoreControlWord).getWidth
   private val dataMemoryAddressWidth = log2Ceil(cfg.dataMemoryWords)
   private val blockWidth = 512
 
@@ -45,25 +47,11 @@ class CanCore(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
 
   // ========== Modules ========== //
 
-  private val programMemory = Module(
-    new ProgramMemory(
-      programMemoryAddressWidth,
-      controlWordWidth,
-      cfg.programMemoryWords,
-      cfg.syncReadMemory
-    )
-  )
-  private val dataMemory = Module(
-    new DataMemory(
-      dataMemoryAddressWidth,
-      blockWidth,
-      cfg.dataMemoryWords,
-      cfg.syncReadMemory
-    )
-  )
+  private val programMemory = Module(new ProgramMemory)
+  private val dataMemory = Module(new DataMemory)
   private val blockInitializer = Module(new BlockInitializer)
-  private val columnarRound = Module(ChaChaRound.columnar)
-  private val diagonalRound = Module(ChaChaRound.diagonal)
+  private val columnarRound = Module(new ColumnarRound)
+  private val diagonalRound = Module(new DiagonalRound)
   private val adder = Module(new Adder)
   private val xorer = Module(new Xorer)
 
@@ -71,28 +59,26 @@ class CanCore(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
 
   private val afterBlockInitializer =
     if (cfg.regAfterBlockInitializer)
-      Reg(Vec(16, UInt(32.W)))
+      Reg(UInt(512.W))
     else
-      Wire(Vec(16, UInt(32.W)))
+      Wire(UInt(512.W))
   private val betweenRounds =
     if (cfg.regBetweenRounds)
-      Reg(Vec(16, UInt(32.W)))
+      Reg(UInt(512.W))
     else
-      Wire(Vec(16, UInt(32.W)))
-  private val afterRounds = Reg(Vec(16, UInt(32.W)))
+      Wire(UInt(512.W))
+  private val afterRounds = Reg(UInt(512.W))
   private val afterAdder =
     if (cfg.regAfterAdder)
-      Reg(Vec(16, UInt(32.W)))
+      Reg(UInt(512.W))
     else
-      Wire(Vec(16, UInt(32.W)))
-  private val afterXorer = Wire(Vec(16, UInt(32.W)))
+      Wire(UInt(512.W))
+  private val afterXorer = Wire(UInt(512.W))
 
   // ========== Buses (Port Aliases) ========== //
 
-  private val ctrl =
-    programMemory.cw.asTypeOf(ControlWord(programMemoryAddressWidth))
-  private val data =
-    dataMemory.read.map(_.data.asTypeOf(Vec(16, UInt(32.W))))
+  private val ctrl = programMemory.cw.asTypeOf(new CanCoreControlWord)
+  private val data = dataMemory.read.map(_.data)
 
   // ========== Multiplexers ========== //
 
@@ -113,22 +99,22 @@ class CanCore(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
   programMemory.read <> io.programMemory.read
   programMemory.write <> io.programMemory.write
 
-  dataMemory.read(0).addr := ctrl.ramReadAddress(0)
+  dataMemory.read(0).addr := ctrl.dataMemoryReadAddress(0)
   dataMemory.read(1).addr := Mux(
     io.dataMemory.take,
     io.dataMemory.read.addr,
-    ctrl.ramReadAddress(1)
+    ctrl.dataMemoryReadAddress(1)
   )
   io.dataMemory.read.data := dataMemory.read(1).data
   dataMemory.write.en := Mux(
     io.dataMemory.take,
     io.dataMemory.write.en,
-    ctrl.ramWriteEnable
+    ctrl.dataMemoryWriteEnable
   )
   dataMemory.write.addr := Mux(
     io.dataMemory.take,
     io.dataMemory.write.addr,
-    ctrl.ramWriteAddress
+    ctrl.dataMemoryWriteAddress
   )
   dataMemory.write.data := Mux(
     io.dataMemory.take,
