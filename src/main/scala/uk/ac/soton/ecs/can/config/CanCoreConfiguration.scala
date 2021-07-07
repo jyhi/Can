@@ -10,5 +10,6 @@ case class CanCoreConfiguration(
     syncReadMemory: Boolean,
     regAfterBlockInitializer: Boolean,
     regBetweenRounds: Boolean,
-    regAfterAdder: Boolean
+    regAfterAdder: Boolean,
+    quarterRoundType: Int
 )

@@ -3,7 +3,9 @@
 
 package uk.ac.soton.ecs.can.core
 
-class ColumnarRound extends BaseRound {
+import uk.ac.soton.ecs.can.config.CanCoreConfiguration
+
+class ColumnarRound(implicit cfg: CanCoreConfiguration) extends BaseRound {
   wire(
     Seq(
       Seq(0, 4, 8, 12),
