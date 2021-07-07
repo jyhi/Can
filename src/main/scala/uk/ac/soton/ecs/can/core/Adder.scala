@@ -10,5 +10,10 @@ class Adder extends MultiIOModule {
   val rhs = IO(Input(UInt(512.W)))
   val out = IO(Output(UInt(512.W)))
 
-  out := lhs + rhs
+  private val _lhs = lhs.asTypeOf(Vec(16, UInt(32.W)))
+  private val _rhs = rhs.asTypeOf(Vec(16, UInt(32.W)))
+  private val _out = Wire(Vec(16, UInt(32.W)))
+  out := _out.asUInt()
+
+  _lhs.zip(_rhs).zip(_out).foreach { case ((l, r), o) => o := l + r }
 }
