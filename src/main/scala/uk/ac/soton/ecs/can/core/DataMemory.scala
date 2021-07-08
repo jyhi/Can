@@ -10,15 +10,10 @@ import uk.ac.soton.ecs.can.config.CanCoreConfiguration
 class DataMemory(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
   private val addrWidth = log2Ceil(cfg.dataMemoryWords)
 
-  val read = IO(
-    Vec(
-      2,
-      new Bundle {
-        val addr = Input(UInt(addrWidth.W))
-        val data = Output(UInt(512.W))
-      }
-    )
-  )
+  val read = IO(new Bundle {
+    val addr = Input(UInt(addrWidth.W))
+    val data = Output(UInt(512.W))
+  })
   val write = IO(new Bundle {
     val en = Input(Bool())
     val addr = Input(UInt(addrWidth.W))
@@ -31,7 +26,7 @@ class DataMemory(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
     else
       Mem(cfg.dataMemoryWords, UInt(512.W))
 
-  read.foreach(p => p.data := mem(p.addr))
+  read.data := mem(read.addr)
 
   when(write.en) {
     mem(write.addr) := write.data
