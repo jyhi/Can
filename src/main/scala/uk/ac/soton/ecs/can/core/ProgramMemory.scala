@@ -5,7 +5,7 @@ package uk.ac.soton.ecs.can.core
 
 import chisel3._
 import chisel3.util.log2Ceil
-import uk.ac.soton.ecs.can.types.CanCoreControlWord
+import uk.ac.soton.ecs.can.types._
 import uk.ac.soton.ecs.can.config.CanCoreConfiguration
 
 class ProgramMemory(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
@@ -19,16 +19,8 @@ class ProgramMemory(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
   })
   val cw = IO(Output(UInt(cwWidth.W)))
 
-  val read = IO(new Bundle {
-    val en = Input(Bool())
-    val addr = Input(UInt(addrWidth.W))
-    val data = Output(UInt(cwWidth.W))
-  })
-  val write = IO(new Bundle {
-    val en = Input(Bool())
-    val addr = Input(UInt(addrWidth.W))
-    val data = Input(UInt(cwWidth.W))
-  })
+  val read = IO(new MemoryReadIO(addrWidth, cwWidth))
+  val write = IO(new MemoryWriteIO(addrWidth, cwWidth))
 
   private val mem =
     if (cfg.syncReadMemory)

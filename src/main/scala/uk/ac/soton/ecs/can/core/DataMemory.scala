@@ -5,21 +5,14 @@ package uk.ac.soton.ecs.can.core
 
 import chisel3._
 import chisel3.util.log2Ceil
+import uk.ac.soton.ecs.can.types._
 import uk.ac.soton.ecs.can.config.CanCoreConfiguration
 
 class DataMemory(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
   private val addrWidth = log2Ceil(cfg.dataMemoryWords)
 
-  val read = IO(new Bundle {
-    val en = Input(Bool())
-    val addr = Input(UInt(addrWidth.W))
-    val data = Output(UInt(512.W))
-  })
-  val write = IO(new Bundle {
-    val en = Input(Bool())
-    val addr = Input(UInt(addrWidth.W))
-    val data = Input(UInt(512.W))
-  })
+  val read = IO(new MemoryReadIO(addrWidth, 512))
+  val write = IO(new MemoryWriteIO(addrWidth, 512))
 
   private val mem =
     if (cfg.syncReadMemory)
