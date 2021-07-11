@@ -9,19 +9,18 @@ import uk.ac.soton.ecs.can.config.CanCoreConfiguration
 
 class CanCoreControlWord(implicit val cfg: CanCoreConfiguration)
     extends Bundle {
-  private val dataMemoryAddrWidth = log2Ceil(cfg.dataMemoryWords)
+  private val dataMemoryAddressWidth = log2Ceil(cfg.dataMemoryWords)
 
   val immediate = UInt(cfg.immediateWidth.W)
   val absoluteBranch = Bool()
   val relativeBranch = Bool()
-  val dataMemoryReadAddress = Vec(2, UInt(dataMemoryAddrWidth.W))
+
+  val dataMemoryReadEnable = Bool()
+  val dataMemoryReadAddress = UInt(dataMemoryAddressWidth.W)
   val dataMemoryWriteEnable = Bool()
-  val dataMemoryWriteAddress = UInt(dataMemoryAddrWidth.W)
-  val fillConstants = Bool()
+  val dataMemoryWriteAddress = UInt(dataMemoryAddressWidth.W)
+
+  val fillConstant = Bool()
   val incrementBlockCount = Bool()
-  val roundLoop = Bool()
-  val addFrom = Bool()
-  val xorFrom = Bool()
-  val writeBackFromInit = Bool()
-  val writeBackFromRound = Bool()
+  val aluFunction = UInt(CanCoreALUFunction.requiredWidth.W)
 }
