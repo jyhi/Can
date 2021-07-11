@@ -40,9 +40,7 @@ class ProgramMemory(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
 
   cw := mem(pc)
 
-  when(read.en) {
-    read.data := mem(read.addr)
-  }
+  read.data := mem(read.addr)
 
   when(write.en) {
     mem(write.addr) := write.data

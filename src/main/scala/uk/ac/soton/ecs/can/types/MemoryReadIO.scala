@@ -6,7 +6,6 @@ package uk.ac.soton.ecs.can.types
 import chisel3._
 
 class MemoryReadIO(addrWidth: Int, dataWidth: Int) extends Bundle {
-  val en = Input(Bool())
   val addr = Input(UInt(addrWidth.W))
   val data = Output(UInt(dataWidth.W))
 }

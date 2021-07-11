@@ -20,9 +20,7 @@ class DataMemory(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
     else
       Mem(cfg.dataMemoryWords, UInt(512.W))
 
-  when(read.en) {
-    read.data := mem(read.addr)
-  }
+  read.data := mem(read.addr)
 
   when(write.en) {
     mem(write.addr) := write.data
