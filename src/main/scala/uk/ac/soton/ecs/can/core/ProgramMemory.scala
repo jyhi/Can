@@ -4,7 +4,7 @@
 package uk.ac.soton.ecs.can.core
 
 import chisel3._
-import chisel3.util.log2Ceil
+import chisel3.util.{MuxLookup, log2Ceil}
 import uk.ac.soton.ecs.can.types._
 import uk.ac.soton.ecs.can.config.CanCoreConfiguration
 
@@ -17,7 +17,7 @@ class ProgramMemory(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
     val rel = Input(Bool())
     val addr = Input(UInt(addrWidth.W))
   })
-  val cw = IO(Output(UInt(cwWidth.W)))
+  val take = IO(Input(Bool()))
 
   val read = IO(new MemoryReadIO(addrWidth, cwWidth))
   val write = IO(new MemoryWriteIO(addrWidth, cwWidth))
@@ -30,17 +30,21 @@ class ProgramMemory(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
 
   private val pc = RegInit(0.U(addrWidth.W))
 
-  when(br.abs) {
-    pc := br.addr.asUInt()
-  }.elsewhen(br.rel) {
-    pc := (pc.asSInt() + br.addr.asSInt()).asUInt()
-  }.otherwise {
-    pc := pc + 1.U
-  }
+  pc := Mux(
+    take,
+    pc,
+    Mux(
+      br.abs,
+      br.addr.asUInt(),
+      Mux(
+        br.rel,
+        (pc.asSInt() + br.addr.asSInt()).asUInt(),
+        pc + 1.U
+      )
+    )
+  )
 
-  cw := mem(pc)
-
-  read.data := mem(read.addr)
+  read.data := mem(Mux(take, read.addr, pc))
 
   when(write.en) {
     mem(write.addr) := write.data

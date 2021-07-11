@@ -20,6 +20,7 @@ class CanCore(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
   //////////////////// Ports ////////////////////
 
   val io = IO(new Bundle {
+    val take = Input(Bool())
     val programMemory = new Bundle {
       val read =
         new MemoryReadIO(programMemoryAddressWidth, programMemoryDataWidth)
@@ -27,7 +28,6 @@ class CanCore(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
         new MemoryWriteIO(programMemoryAddressWidth, programMemoryDataWidth)
     }
     val dataMemory = new Bundle {
-      val take = Input(Bool())
       val read =
         new MemoryReadIO(dataMemoryAddressWidth, dataMemoryDataWidth)
       val write =
@@ -44,24 +44,25 @@ class CanCore(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
 
   //////////////////// Control Paths ////////////////////
 
-  private val ctrl = programMemory.cw.asTypeOf(new CanCoreControlWord)
+  private val ctrl = programMemory.read.data.asTypeOf(new CanCoreControlWord)
 
   programMemory.br.abs := ctrl.absoluteBranch
   programMemory.br.rel := ctrl.relativeBranch
   programMemory.br.addr := ctrl.immediate
+  programMemory.take := io.take
 
   dataMemory.read.addr := Mux(
-    io.dataMemory.take,
+    io.take,
     io.dataMemory.read.addr,
     ctrl.dataMemoryReadAddress
   )
   dataMemory.write.en := Mux(
-    io.dataMemory.take,
+    io.take,
     io.dataMemory.write.en,
     ctrl.dataMemoryWriteEnable
   )
   dataMemory.write.addr := Mux(
-    io.dataMemory.take,
+    io.take,
     io.dataMemory.write.addr,
     ctrl.dataMemoryWriteAddress
   )
@@ -83,7 +84,7 @@ class CanCore(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
 
   io.dataMemory.read.data := dataMemory.read.data
   dataMemory.write.data := Mux(
-    io.dataMemory.take,
+    io.take,
     io.dataMemory.write.data,
     alu.y
   )
