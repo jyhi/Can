@@ -20,6 +20,7 @@ class ProgramMemory(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
   val cw = IO(Output(UInt(cwWidth.W)))
 
   val read = IO(new Bundle {
+    val en = Input(Bool())
     val addr = Input(UInt(addrWidth.W))
     val data = Output(UInt(cwWidth.W))
   })
@@ -47,7 +48,9 @@ class ProgramMemory(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
 
   cw := mem(pc)
 
-  read.data := mem(read.addr)
+  when(read.en) {
+    read.data := mem(read.addr)
+  }
 
   when(write.en) {
     mem(write.addr) := write.data

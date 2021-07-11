@@ -11,6 +11,7 @@ class DataMemory(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
   private val addrWidth = log2Ceil(cfg.dataMemoryWords)
 
   val read = IO(new Bundle {
+    val en = Input(Bool())
     val addr = Input(UInt(addrWidth.W))
     val data = Output(UInt(512.W))
   })
@@ -26,7 +27,9 @@ class DataMemory(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
     else
       Mem(cfg.dataMemoryWords, UInt(512.W))
 
-  read.data := mem(read.addr)
+  when(read.en) {
+    read.data := mem(read.addr)
+  }
 
   when(write.en) {
     mem(write.addr) := write.data
