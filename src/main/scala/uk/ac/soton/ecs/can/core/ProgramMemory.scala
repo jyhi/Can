@@ -4,9 +4,9 @@
 package uk.ac.soton.ecs.can.core
 
 import chisel3._
-import chisel3.util.{MuxLookup, log2Ceil}
-import uk.ac.soton.ecs.can.types._
+import chisel3.util.log2Ceil
 import uk.ac.soton.ecs.can.config.CanCoreConfiguration
+import uk.ac.soton.ecs.can.types._
 
 class ProgramMemory(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
   private val addrWidth = log2Ceil(cfg.programMemoryWords)

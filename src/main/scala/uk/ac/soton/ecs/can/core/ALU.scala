@@ -42,7 +42,9 @@ class ALU(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
       CanCoreALUFunction.columnarRound.U -> columnarRound.out,
       CanCoreALUFunction.diagonalRound.U -> diagonalRound.out,
       CanCoreALUFunction.add.U -> adder.out,
-      CanCoreALUFunction.xor.U -> xorer.out
+      CanCoreALUFunction.xor.U -> xorer.out,
+      CanCoreALUFunction.a.U -> a,
+      CanCoreALUFunction.b.U -> b
     )
   )
 }
