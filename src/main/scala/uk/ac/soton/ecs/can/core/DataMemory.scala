@@ -16,7 +16,7 @@ class DataMemory(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
 
   private val mem =
     if (cfg.syncReadMemory)
-      SyncReadMem(cfg.dataMemoryWords, UInt(512.W))
+      SyncReadMem(cfg.dataMemoryWords, UInt(512.W), SyncReadMem.ReadFirst)
     else
       Mem(cfg.dataMemoryWords, UInt(512.W))
 

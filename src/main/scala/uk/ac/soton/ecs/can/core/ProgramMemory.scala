@@ -24,7 +24,11 @@ class ProgramMemory(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
 
   private val mem =
     if (cfg.syncReadMemory)
-      SyncReadMem(cfg.programMemoryWords, UInt(cwWidth.W))
+      SyncReadMem(
+        cfg.programMemoryWords,
+        UInt(cwWidth.W),
+        SyncReadMem.ReadFirst
+      )
     else
       Mem(cfg.programMemoryWords, UInt(cwWidth.W))
 
