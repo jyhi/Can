@@ -46,10 +46,7 @@ class CanCore(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
 
   private val ctrl = programMemory.read.data.asTypeOf(new CanCoreControlWord)
 
-  programMemory.br.abs := ctrl.absoluteBranch
-  programMemory.br.rel := ctrl.relativeBranch
-  programMemory.br.addr := ctrl.immediate
-  programMemory.take := io.take
+  programMemory.halt := Mux(io.take, io.take, ctrl.halt)
 
   dataMemory.read.addr := Mux(
     io.take,

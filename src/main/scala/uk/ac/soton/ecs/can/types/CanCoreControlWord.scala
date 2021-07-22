@@ -12,9 +12,7 @@ class CanCoreControlWord(implicit val cfg: CanCoreConfiguration)
   private val dataMemoryAddressWidth = log2Ceil(cfg.dataMemoryWords)
   private val registerFileAddressWidth = log2Ceil(cfg.registerFileWords)
 
-  val immediate = UInt(cfg.immediateWidth.W)
-  val absoluteBranch = Bool()
-  val relativeBranch = Bool()
+  val halt = Bool()
 
   val dataMemoryReadAddress = UInt(dataMemoryAddressWidth.W)
   val dataMemoryWriteEnable = Bool()

@@ -12,12 +12,7 @@ class ProgramMemory(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
   private val addrWidth = log2Ceil(cfg.programMemoryWords)
   private val cwWidth = (new CanCoreControlWord).getWidth
 
-  val br = IO(new Bundle {
-    val abs = Input(Bool())
-    val rel = Input(Bool())
-    val addr = Input(UInt(addrWidth.W))
-  })
-  val take = IO(Input(Bool()))
+  val halt = IO(Input(Bool()))
 
   val read = IO(new MemoryReadIO(addrWidth, cwWidth))
   val write = IO(new MemoryWriteIO(addrWidth, cwWidth))
@@ -34,21 +29,9 @@ class ProgramMemory(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
 
   private val pc = RegInit(0.U(addrWidth.W))
 
-  pc := Mux(
-    take,
-    pc,
-    Mux(
-      br.abs,
-      br.addr.asUInt(),
-      Mux(
-        br.rel,
-        (pc.asSInt() + br.addr.asSInt()).asUInt(),
-        pc + 1.U
-      )
-    )
-  )
+  pc := Mux(halt, pc, pc + 1.U)
 
-  read.data := mem(Mux(take, read.addr, pc))
+  read.data := mem(Mux(halt, read.addr, pc))
 
   when(write.en) {
     mem(write.addr) := write.data
