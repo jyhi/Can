@@ -21,6 +21,8 @@ class CanCore(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
 
   val io = IO(new Bundle {
     val take = Input(Bool())
+    val halted = Output(Bool())
+
     val programMemory = new Bundle {
       val read =
         new MemoryReadIO(programMemoryAddressWidth, programMemoryDataWidth)
@@ -46,7 +48,9 @@ class CanCore(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
 
   private val ctrl = programMemory.read.data.asTypeOf(new CanCoreControlWord)
 
-  programMemory.halt := Mux(io.take, io.take, ctrl.halt)
+  private val halt = Mux(io.take, io.take, ctrl.halt)
+  io.halted := halt
+  programMemory.halt := halt
 
   dataMemory.read.addr := Mux(
     io.take,
