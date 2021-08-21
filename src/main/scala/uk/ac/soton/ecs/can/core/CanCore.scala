@@ -19,23 +19,14 @@ class CanCore(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
 
   //////////////////// Ports ////////////////////
 
-  val io = IO(new Bundle {
-    val take = Input(Bool())
-    val halted = Output(Bool())
-
-    val programMemory = new Bundle {
-      val read =
-        new MemoryReadIO(programMemoryAddressWidth, programMemoryDataWidth)
-      val write =
-        new MemoryWriteIO(programMemoryAddressWidth, programMemoryDataWidth)
-    }
-    val dataMemory = new Bundle {
-      val read =
-        new MemoryReadIO(dataMemoryAddressWidth, dataMemoryDataWidth)
-      val write =
-        new MemoryWriteIO(dataMemoryAddressWidth, dataMemoryDataWidth)
-    }
-  })
+  val io = IO(
+    new CanCoreIO(
+      programMemoryAddressWidth,
+      programMemoryDataWidth,
+      dataMemoryAddressWidth,
+      dataMemoryDataWidth
+    )
+  )
 
   //////////////////// Modules ////////////////////
 
