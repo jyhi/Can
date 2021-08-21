@@ -10,6 +10,7 @@ simulation/
 project/
 target/
 *.v
+*.f
 *.fir
 *.anno.json
 *.txt
