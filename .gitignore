@@ -6,8 +6,10 @@
 db/
 incremental_db/
 output_files/
+simulation/
 project/
 target/
 *.v
 *.fir
 *.anno.json
+*.txt
