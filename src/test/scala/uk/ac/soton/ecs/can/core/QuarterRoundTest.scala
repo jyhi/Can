@@ -34,12 +34,11 @@ class QuarterRoundTest extends FlatSpec with ChiselScalatestTester {
 
   behavior of "The Combinational Quarter Round"
 
-  private def testCombinationalQuarterRound(
-      testVector: Seq[(UInt, UInt)]
-  ): Unit = test(new CombinationalQuarterRound) { c =>
-    poke(c, testVectorRFC8439211)
-    expect(c, testVectorRFC8439211)
-  }
+  private def testCombinationalQuarterRound(tv: TestVector): Unit =
+    test(new CombinationalQuarterRound) { c =>
+      poke(c, tv)
+      expect(c, tv)
+    }
 
   it should "pass RFC8439 2.1.1 test vector" in
     testCombinationalQuarterRound(testVectorRFC8439211)
