@@ -18,3 +18,4 @@ target/
 *.fir
 *.anno.json
 *.txt
+*.rpt
