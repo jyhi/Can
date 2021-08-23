@@ -10,6 +10,8 @@ class Adder extends MultiIOModule {
   val rhs = IO(Input(UInt(512.W)))
   val out = IO(Output(UInt(512.W)))
 
+  // NOTE: Unlike what's done in `BaseRound`, here no reversal is applied, since
+  // the additions are done on the basis of words and do not spread bits.
   private val _lhs = lhs.asTypeOf(Vec(16, UInt(32.W)))
   private val _rhs = rhs.asTypeOf(Vec(16, UInt(32.W)))
   private val _out = Wire(Vec(16, UInt(32.W)))

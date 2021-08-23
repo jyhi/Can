@@ -4,6 +4,7 @@
 package uk.ac.soton.ecs.can.core
 
 import chisel3._
+import chisel3.util.Cat
 import uk.ac.soton.ecs.can.config.CanCoreConfiguration
 
 abstract class BaseRound(implicit cfg: CanCoreConfiguration)
@@ -11,9 +12,19 @@ abstract class BaseRound(implicit cfg: CanCoreConfiguration)
   val in = IO(Input(UInt(512.W)))
   val out = IO(Output(UInt(512.W)))
 
-  protected val _in = in.asTypeOf(Vec(16, UInt(32.W)))
+  // NOTE: A conversion between an UInt and an aggregate type reverses the
+  // sequence of elements. The `_in` cast below reverses such reversal by
+  // manually creating a `Vec` with the elements in the casted `Vec` reversed.
+  // Same for the `out` connection, where `Cat`, which concatenates elements
+  // from the most significant element to the least significant element, is used
+  // instead of `_out.asUInt()`, which puts the first element in the `Vec` to
+  // the least significant position of `UInt`.
+  //
+  // See also:
+  // - https://github.com/chipsalliance/chisel3/blob/master/core/src/main/scala/chisel3/Data.scala#L695-L696
+  protected val _in = VecInit(in.asTypeOf(Vec(16, UInt(32.W))).reverse)
   protected val _out = Wire(Vec(16, UInt(32.W)))
-  out := _out.asUInt()
+  out := Cat(_out)
 
   protected def wire(wireBox: Seq[Seq[Int]]): Unit = wireBox.foreach {
     wireSeq =>
