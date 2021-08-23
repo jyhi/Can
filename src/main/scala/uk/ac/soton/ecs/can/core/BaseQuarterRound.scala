@@ -9,6 +9,5 @@ abstract class BaseQuarterRound extends MultiIOModule {
   val in = IO(Input(Vec(4, UInt(32.W))))
   val out = IO(Output(Vec(4, UInt(32.W))))
 
-  protected def rotateLeft(v: UInt, b: Int): UInt =
-    v(31 - b, 0) ## v(31, 32 - b)
+  protected def rotateLeft(v: UInt, b: Int): UInt = v.tail(b) ## v.head(b)
 }
