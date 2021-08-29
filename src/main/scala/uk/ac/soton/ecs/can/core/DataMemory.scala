@@ -5,7 +5,6 @@ package uk.ac.soton.ecs.can.core
 
 import chisel3._
 import chisel3.util.log2Ceil
-import chisel3.util.experimental.loadMemoryFromFile
 import uk.ac.soton.ecs.can.types._
 import uk.ac.soton.ecs.can.config.CanCoreConfiguration
 
@@ -26,6 +25,4 @@ class DataMemory(implicit cfg: CanCoreConfiguration) extends MultiIOModule {
   when(write.en) {
     mem(write.addr) := write.data
   }
-
-  loadMemoryFromFile(mem, "firmware/test/test.data.hex")
 }
