@@ -19,3 +19,4 @@ target/
 *.anno.json
 *.txt
 *.rpt
+*.qws
