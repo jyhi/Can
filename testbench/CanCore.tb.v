@@ -44,7 +44,10 @@ initial begin
   $readmemh("../../../../firmware/test/test.prog.hex", canCore.programMemory.mem);
   $readmemh("../../../../firmware/test/test.data.hex", canCore.dataMemory.mem);
 
-  $stop;
+  #2 reset <= 0;
+
+  // Refer to test.prog.hex for the number of steps
+  #59 $stop;
 end
 
 endmodule
